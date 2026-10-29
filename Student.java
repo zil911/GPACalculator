@@ -2,6 +2,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Student {
+
     private static final Student instance = new Student();
 
     private String name;
@@ -11,7 +12,7 @@ public class Student {
 
     private final Set<Course> courses = new HashSet<>();
 
-    // Private constructor prevents creating other instances.
+    // Singleton: prevent creating instances outside this class.
     private Student() {
     }
 
@@ -24,23 +25,23 @@ public class Student {
 
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException(
-                "Student name cannot be empty.");
+                    "Student name cannot be empty.");
         }
 
         if (studentId == null || studentId.trim().isEmpty()) {
             throw new IllegalArgumentException(
-                "Student ID cannot be empty.");
+                    "Student ID cannot be empty.");
         }
 
         if (!Double.isFinite(currentGpa)
                 || currentGpa < 0 || currentGpa > 5) {
             throw new IllegalArgumentException(
-                "Current GPA must be between 0 and 5.");
+                    "Current GPA must be between 0 and 5.");
         }
 
         if (completedHours < 0) {
             throw new IllegalArgumentException(
-                "Completed hours cannot be negative.");
+                    "Completed hours cannot be negative.");
         }
 
         this.name = name.trim();
@@ -52,7 +53,7 @@ public class Student {
     public boolean addCourse(Course course) {
         if (course == null) {
             throw new IllegalArgumentException(
-                "Course cannot be null.");
+                    "Course cannot be null.");
         }
 
         return courses.add(course);
@@ -83,7 +84,7 @@ public class Student {
 
         if (hours == 0) {
             throw new IllegalStateException(
-                "Add at least one course first.");
+                    "Add at least one course first.");
         }
 
         return getSemesterPoints() / hours;
@@ -94,7 +95,7 @@ public class Student {
 
         if (totalHours == 0) {
             throw new IllegalStateException(
-                "GPA cannot be calculated without credit hours.");
+                    "GPA cannot be calculated without credit hours.");
         }
 
         double previousPoints = currentGpa * completedHours;
@@ -121,4 +122,12 @@ public class Student {
     public int getCompletedHours() {
         return completedHours;
     }
-}   
+
+    public void reset() {
+        name = "";
+        studentId = "";
+        currentGpa = 0;
+        completedHours = 0;
+        courses.clear();
+    }
+}

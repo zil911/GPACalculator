@@ -1,8 +1,12 @@
-public class Main {
-    public static void main(String[] args) {
-        GPAView view = new GPAView();
-        GPAController controller = new GPAController(view);
+import javax.swing.SwingUtilities;
 
-        controller.start();
+public class Main {
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            GPAView view = new GPAView();
+            new GPAController(view);
+            view.setVisible(true);
+        });
     }
 }

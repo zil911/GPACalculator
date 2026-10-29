@@ -1,4 +1,5 @@
 public final class Course {
+
     private final String courseCode;
     private final int creditHours;
     private final double gradePoints;
@@ -7,7 +8,7 @@ public final class Course {
     // courseCode != null
     // courseCode.trim().length() > 0
     // creditHours > 0
-    // gradePoints >= 0.0 && gradePoints <= 5.0
+    // gradePoints is finite and between 0.0 and 5.0
 
     // AF:
     // Represents a course identified by courseCode,
@@ -19,18 +20,18 @@ public final class Course {
 
         if (courseCode == null || courseCode.trim().isEmpty()) {
             throw new IllegalArgumentException(
-                "Course code cannot be empty.");
+                    "Course code cannot be empty.");
         }
 
         if (creditHours <= 0) {
             throw new IllegalArgumentException(
-                "Credit hours must be greater than zero.");
+                    "Credit hours must be greater than zero.");
         }
 
         if (!Double.isFinite(gradePoints)
                 || gradePoints < 0 || gradePoints > 5) {
             throw new IllegalArgumentException(
-                "Grade points must be between 0 and 5.");
+                    "Grade points must be between 0 and 5.");
         }
 
         this.courseCode = courseCode.trim();

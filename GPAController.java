@@ -1,65 +1,70 @@
-import java.util.Scanner;
-
 public class GPAController {
+
     private final Student student = Student.getInstance();
-    private final Scanner input = new Scanner(System.in);
     private final GPAView view;
 
     public GPAController(GPAView view) {
         this.view = view;
+
+        view.onAddCourse(e -> addCourse());
+        view.onCalculate(e -> calculate());
+
+        view.onReset(e -> {
+            student.reset();
+            view.clearForm();
+        });
     }
 
-    private String ask(String message) {
-        view.showPrompt(message);
-        return input.nextLine().trim();
-    }
-
-    public void start() {
+    private void addCourse() {
         try {
-            String name = ask("Student name: ");
-            String id = ask("Student ID: ");
-
-            double gpa = Double.parseDouble(
-                    ask("Previous GPA (0 to 5): "));
+            String code = view.getCourseCode();
 
             int hours = Integer.parseInt(
-                    ask("Previously completed hours: "));
+                    view.getCourseHours());
 
-            student.setInfo(name, id, gpa, hours);
+            double points = Double.parseDouble(
+                    view.getCoursePoints());
 
-            int count = Integer.parseInt(
-                    ask("Number of courses: "));
+            Course course = new Course(code, hours, points);
 
-            if (count <= 0) {
-                view.showMessage("Enter at least one course.");
-                return;
+            if (student.addCourse(course)) {
+                view.showAddedCourse(course);
+            } else {
+                view.showError(
+                        "This course code has already been added.");
             }
 
-            for (int i = 1; i <= count; i++) {
-                view.showMessage("\nCourse " + i);
+        } catch (NumberFormatException e) {
+            view.showError(
+                    "Enter whole credit hours and numeric grade points.");
 
-                String code = ask("Course code: ");
+        } catch (IllegalArgumentException e) {
+            view.showError(e.getMessage());
+        }
+    }
 
-                int credits = Integer.parseInt(
-                        ask("Credit hours: "));
+    private void calculate() {
+        try {
+            double gpa = Double.parseDouble(
+                    view.getPreviousGpa());
 
-                double points = Double.parseDouble(
-                        ask("Grade points (0 to 5): "));
+            int hours = Integer.parseInt(
+                    view.getPreviousHours());
 
-                Course course = new Course(code, credits, points);
-
-                if (!student.addCourse(course)) {
-                    view.showMessage(
-                            "Duplicate course. Enter a different course.");
-                    i--;
-                }
-            }
+            student.setInfo(
+                    view.getStudentName(),
+                    view.getStudentId(),
+                    gpa,
+                    hours);
 
             view.showResults(student);
 
-        } catch (IllegalArgumentException e) {
-            view.showMessage(
-                    "Invalid input. Check your values and restart.");
+        } catch (NumberFormatException e) {
+            view.showError(
+                    "Enter a numeric GPA and whole completed hours.");
+
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            view.showError(e.getMessage());
         }
     }
 }
