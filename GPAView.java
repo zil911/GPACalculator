@@ -11,16 +11,30 @@ public class GPAView extends JFrame {
     private final JTextField hoursField = new JTextField();
 
     private final JTextField codeField = new JTextField();
-    private final JTextField creditsField = new JTextField();
-    private final JTextField pointsField = new JTextField();
 
-    private final JButton addButton = new JButton("Add Course");
+    private final JComboBox<Integer> creditsBox =
+            new JComboBox<>(new Integer[]{2, 3, 4});
+
+    private final JComboBox<String> gradeBox =
+            new JComboBox<>(new String[]{
+                "A+", "A", "B+", "B", "C+",
+                "C", "D+", "D", "F"
+            });
+
+    private final JButton addButton =
+            new JButton("Add Course");
+
     private final JButton calculateButton =
             new JButton("Calculate GPA");
-    private final JButton resetButton = new JButton("Reset");
 
-    private final JTextArea courseList = new JTextArea(7, 35);
-    private final JTextArea results = new JTextArea(6, 35);
+    private final JButton resetButton =
+            new JButton("Reset");
+
+    private final JTextArea courseList =
+            new JTextArea(7, 35);
+
+    private final JTextArea results =
+            new JTextArea(6, 35);
 
     private final JScrollPane resultsScroll =
             new JScrollPane(results);
@@ -29,7 +43,13 @@ public class GPAView extends JFrame {
         setTitle("Student GPA Calculator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JPanel content = new JPanel(new BorderLayout(10, 10));
+        // No selection when the application starts
+        creditsBox.setSelectedIndex(-1);
+        gradeBox.setSelectedIndex(-1);
+
+        JPanel content =
+                new JPanel(new BorderLayout(10, 10));
+
         content.setBorder(
                 BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
@@ -40,7 +60,8 @@ public class GPAView extends JFrame {
                 new JPanel(new GridLayout(4, 2, 8, 8));
 
         studentPanel.setBorder(
-                BorderFactory.createTitledBorder("Student Information"));
+                BorderFactory.createTitledBorder(
+                        "Student Information"));
 
         studentPanel.add(new JLabel("Student name:"));
         studentPanel.add(nameField);
@@ -57,10 +78,12 @@ public class GPAView extends JFrame {
         content.add(studentPanel, BorderLayout.NORTH);
 
         // Course information
-        JPanel coursePanel = new JPanel(new BorderLayout(8, 8));
+        JPanel coursePanel =
+                new JPanel(new BorderLayout(8, 8));
 
         coursePanel.setBorder(
-                BorderFactory.createTitledBorder("Semester Courses"));
+                BorderFactory.createTitledBorder(
+                        "Semester Courses"));
 
         JPanel courseInputs =
                 new JPanel(new GridLayout(4, 2, 8, 8));
@@ -69,10 +92,10 @@ public class GPAView extends JFrame {
         courseInputs.add(codeField);
 
         courseInputs.add(new JLabel("Credit hours:"));
-        courseInputs.add(creditsField);
+        courseInputs.add(creditsBox);
 
-        courseInputs.add(new JLabel("Grade points (0 to 5):"));
-        courseInputs.add(pointsField);
+        courseInputs.add(new JLabel("Grade:"));
+        courseInputs.add(gradeBox);
 
         courseInputs.add(new JLabel(""));
         courseInputs.add(addButton);
@@ -81,7 +104,8 @@ public class GPAView extends JFrame {
 
         coursePanel.add(courseInputs, BorderLayout.NORTH);
         coursePanel.add(
-                new JScrollPane(courseList), BorderLayout.CENTER);
+                new JScrollPane(courseList),
+                BorderLayout.CENTER);
 
         content.add(coursePanel, BorderLayout.CENTER);
 
@@ -96,11 +120,14 @@ public class GPAView extends JFrame {
         results.setEditable(false);
 
         resultsScroll.setBorder(
-                BorderFactory.createTitledBorder("Last Calculated Results"));
+                BorderFactory.createTitledBorder(
+                        "Last Calculated Results"));
 
         resultsScroll.setVisible(false);
 
-        JPanel bottomPanel = new JPanel(new BorderLayout(8, 8));
+        JPanel bottomPanel =
+                new JPanel(new BorderLayout(8, 8));
+
         bottomPanel.add(buttonsPanel, BorderLayout.NORTH);
         bottomPanel.add(resultsScroll, BorderLayout.CENTER);
 
@@ -131,11 +158,47 @@ public class GPAView extends JFrame {
     }
 
     public String getCourseHours() {
-        return creditsField.getText().trim();
+        Integer hours = (Integer) creditsBox.getSelectedItem();
+
+        if (hours == null) {
+            throw new IllegalArgumentException(
+                    "Select credit hours.");
+        }
+
+        return hours.toString();
     }
 
     public String getCoursePoints() {
-        return pointsField.getText().trim();
+        String grade = (String) gradeBox.getSelectedItem();
+
+        if (grade == null) {
+            throw new IllegalArgumentException(
+                    "Select a grade.");
+        }
+
+        switch (grade) {
+            case "A+":
+                return "5.0";
+            case "A":
+                return "4.75";
+            case "B+":
+                return "4.5";
+            case "B":
+                return "4.0";
+            case "C+":
+                return "3.5";
+            case "C":
+                return "3.0";
+            case "D+":
+                return "2.5";
+            case "D":
+                return "2.0";
+            case "F":
+                return "1.0";
+            default:
+                throw new IllegalArgumentException(
+                        "Invalid grade.");
+        }
     }
 
     public void onAddCourse(ActionListener listener) {
@@ -158,8 +221,8 @@ public class GPAView extends JFrame {
                 + "\n");
 
         codeField.setText("");
-        creditsField.setText("");
-        pointsField.setText("");
+        creditsBox.setSelectedIndex(-1);
+        gradeBox.setSelectedIndex(-1);
 
         results.setText("");
         resultsScroll.setVisible(false);
@@ -194,8 +257,8 @@ public class GPAView extends JFrame {
         hoursField.setText("");
 
         codeField.setText("");
-        creditsField.setText("");
-        pointsField.setText("");
+        creditsBox.setSelectedIndex(-1);
+        gradeBox.setSelectedIndex(-1);
 
         courseList.setText("");
         results.setText("");
